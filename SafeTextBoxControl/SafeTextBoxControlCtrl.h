@@ -13,10 +13,13 @@ class CSafeTextBoxControlCtrl : public COleControl
 public:
 	CSafeTextBoxControlCtrl();
 
+// 成员
+private:
+	CEdit edit;
+
 // 重写
 public:
 	virtual void OnDraw(CDC* pdc, const CRect& rcBounds, const CRect& rcInvalid);
-	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 	virtual void DoPropExchange(CPropExchange* pPX);
 	virtual void OnResetState();
 
@@ -28,10 +31,6 @@ protected:
 	DECLARE_OLETYPELIB(CSafeTextBoxControlCtrl)      // GetTypeInfo
 	DECLARE_PROPPAGEIDS(CSafeTextBoxControlCtrl)     // 属性页 ID
 	DECLARE_OLECTLTYPE(CSafeTextBoxControlCtrl)		// 类型名称和杂项状态
-
-	// 子类控件支持
-	BOOL IsSubclassedControl();
-	LRESULT OnOcmCommand(WPARAM wParam, LPARAM lParam);
 
 // 消息映射
 	DECLARE_MESSAGE_MAP()

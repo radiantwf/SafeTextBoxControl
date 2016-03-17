@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{1953EAAF-17CC-41F1-B56D-9771C20C03F4}</ProjectGuid>
+    <ProjectGuid>{D6A56314-DAB9-4029-A797-804323460B67}</ProjectGuid>
     <RootNamespace>SafeTextBoxControl</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
     <Keyword>MFCActiveXProj</Keyword>

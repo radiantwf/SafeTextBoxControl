@@ -15,7 +15,6 @@ IMPLEMENT_DYNCREATE(CSafeTextBoxControlCtrl, COleControl)
 // 消息映射
 
 BEGIN_MESSAGE_MAP(CSafeTextBoxControlCtrl, COleControl)
-	ON_MESSAGE(OCM_COMMAND, &CSafeTextBoxControlCtrl::OnOcmCommand)
 	ON_OLEVERB(AFX_IDS_VERB_PROPERTIES, OnProperties)
 END_MESSAGE_MAP()
 
@@ -39,7 +38,7 @@ END_PROPPAGEIDS(CSafeTextBoxControlCtrl)
 // 初始化类工厂和 guid
 
 IMPLEMENT_OLECREATE_EX(CSafeTextBoxControlCtrl, "SAFETEXTBOXCONTR.SafeTextBoxContrCtrl.1",
-	0x482a86f5, 0x7f2e, 0x48a5, 0x92, 0xc0, 0x72, 0x7f, 0x72, 0xe, 0xa0, 0x5a)
+	0x98d55afe, 0x2e8b, 0x4e93, 0x9a, 0xd7, 0x54, 0xeb, 0x5e, 0xaf, 0x31, 0xf5)
 
 // 键入库 ID 和版本
 
@@ -47,8 +46,8 @@ IMPLEMENT_OLETYPELIB(CSafeTextBoxControlCtrl, _tlid, _wVerMajor, _wVerMinor)
 
 // 接口 ID
 
-const IID IID_DSafeTextBoxControl = { 0xA560FDF4, 0x4DBD, 0x476D, { 0x8D, 0x48, 0xE6, 0x5A, 0x35, 0x4F, 0x7E, 0xCE } };
-const IID IID_DSafeTextBoxControlEvents = { 0xB854B739, 0xADCF, 0x4E1D, { 0x80, 0xE2, 0xBC, 0x25, 0xFE, 0x8D, 0xB1, 0x7A } };
+const IID IID_DSafeTextBoxControl = { 0x261FD803, 0x3037, 0x4D70, { 0x9C, 0x93, 0x72, 0xB7, 0x19, 0x65, 0xD1, 0x0 } };
+const IID IID_DSafeTextBoxControlEvents = { 0xBB6E9CD7, 0x4898, 0x4140, { 0xA3, 0x11, 0xD6, 0xE9, 0xCA, 0xAA, 0x95, 0x55 } };
 
 // 控件类型信息
 
@@ -112,7 +111,9 @@ void CSafeTextBoxControlCtrl::OnDraw(
 	if (!pdc)
 		return;
 
-	DoSuperclassPaint(pdc, rcBounds);
+	// TODO:  用您自己的绘图代码替换下面的代码。
+	pdc->FillRect(rcBounds, CBrush::FromHandle((HBRUSH)GetStockObject(WHITE_BRUSH)));
+	pdc->Ellipse(rcBounds);
 }
 
 // CSafeTextBoxControlCtrl::DoPropExchange - 持久性支持
@@ -133,35 +134,6 @@ void CSafeTextBoxControlCtrl::OnResetState()
 	COleControl::OnResetState();  // 重置 DoPropExchange 中找到的默认值
 
 	// TODO:  在此重置任意其他控件状态。
-}
-
-
-// CSafeTextBoxControlCtrl::PreCreateWindow - 修改 CreateWindowEx 的参数
-
-BOOL CSafeTextBoxControlCtrl::PreCreateWindow(CREATESTRUCT& cs)
-{
-	cs.lpszClass = _T("EDIT");
-	BOOL bRet = COleControl::PreCreateWindow(cs);
-	cs.hMenu = NULL;
-	return bRet;
-}
-
-// CSafeTextBoxControlCtrl::IsSubclassedControl - 这是一个子类控件
-
-BOOL CSafeTextBoxControlCtrl::IsSubclassedControl()
-{
-	return TRUE;
-}
-
-// CSafeTextBoxControlCtrl::OnOcmCommand - 处理命令消息
-
-LRESULT CSafeTextBoxControlCtrl::OnOcmCommand(WPARAM wParam, LPARAM lParam)
-{
-	WORD wNotifyCode = HIWORD(wParam);
-
-	// TODO:  在此接通 wNotifyCode。
-
-	return 0;
 }
 
 
