@@ -19,6 +19,7 @@ public:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 	virtual void DoPropExchange(CPropExchange* pPX);
 	virtual void OnResetState();
+	virtual BOOL CSafeTextBoxControlCtrl::PreTranslateMessage(MSG* pMsg);
 
 // ≥…‘±
 private:

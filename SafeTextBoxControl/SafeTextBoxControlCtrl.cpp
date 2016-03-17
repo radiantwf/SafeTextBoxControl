@@ -42,23 +42,23 @@ END_PROPPAGEIDS(CSafeTextBoxControlCtrl)
 IMPLEMENT_OLECREATE_EX(CSafeTextBoxControlCtrl, "SAFETEXTBOXCONTR.SafeTextBoxContrCtrl.1",
 	0xd40c51e, 0x2774, 0x4ff7, 0x94, 0x62, 0x57, 0x9, 0x16, 0x53, 0xaa, 0x87)
 
-// 键入库 ID 和版本
+	// 键入库 ID 和版本
 
-IMPLEMENT_OLETYPELIB(CSafeTextBoxControlCtrl, _tlid, _wVerMajor, _wVerMinor)
+	IMPLEMENT_OLETYPELIB(CSafeTextBoxControlCtrl, _tlid, _wVerMajor, _wVerMinor)
 
-// 接口 ID
+	// 接口 ID
 
-const IID IID_DSafeTextBoxControl = { 0xDE709E5D, 0x8662, 0x4A83, { 0x92, 0x73, 0xA, 0xF3, 0x59, 0xB9, 0x1A, 0xB1 } };
+	const IID IID_DSafeTextBoxControl = { 0xDE709E5D, 0x8662, 0x4A83, { 0x92, 0x73, 0xA, 0xF3, 0x59, 0xB9, 0x1A, 0xB1 } };
 const IID IID_DSafeTextBoxControlEvents = { 0xAD32A0DC, 0x6667, 0x45F0, { 0x9C, 0x64, 0xF0, 0x8C, 0x26, 0x2C, 0x93, 0x72 } };
 
 // 控件类型信息
 
 static const DWORD _dwSafeTextBoxControlOleMisc =
-	OLEMISC_ACTIVATEWHENVISIBLE |
-	OLEMISC_SETCLIENTSITEFIRST |
-	OLEMISC_INSIDEOUT |
-	OLEMISC_CANTLINKINSIDE |
-	OLEMISC_RECOMPOSEONRESIZE;
+OLEMISC_ACTIVATEWHENVISIBLE |
+OLEMISC_SETCLIENTSITEFIRST |
+OLEMISC_INSIDEOUT |
+OLEMISC_CANTLINKINSIDE |
+OLEMISC_RECOMPOSEONRESIZE;
 
 IMPLEMENT_OLECTLTYPE(CSafeTextBoxControlCtrl, IDS_SAFETEXTBOXCONTROL, _dwSafeTextBoxControlOleMisc)
 
@@ -89,15 +89,15 @@ BOOL CSafeTextBoxControlCtrl::CSafeTextBoxControlCtrlFactory::UpdateRegistry(BOO
 		return AfxOleUnregisterClass(m_clsid, m_lpszProgID);
 }
 
+HHOOK hClipboardhook;
+LRESULT CALLBACK ClipboardProc(int code, WPARAM wParam, LPARAM lParam);
 
 // CSafeTextBoxControlCtrl::CSafeTextBoxControlCtrl - 构造函数
-
 CSafeTextBoxControlCtrl::CSafeTextBoxControlCtrl()
 {
 	InitializeIIDs(&IID_DSafeTextBoxControl, &IID_DSafeTextBoxControlEvents);
 	// TODO:  在此初始化控件的实例数据。
 	m_pEdit = (CEdit*)this;
-	ModifyStyle(WS_VSCROLL | ES_AUTOVSCROLL | ES_MULTILINE | ES_WANTRETURN, 0);
 }
 
 // CSafeTextBoxControlCtrl::~CSafeTextBoxControlCtrl - 析构函数
@@ -110,7 +110,7 @@ CSafeTextBoxControlCtrl::~CSafeTextBoxControlCtrl()
 // CSafeTextBoxControlCtrl::OnDraw - 绘图函数
 
 void CSafeTextBoxControlCtrl::OnDraw(
-			CDC* pdc, const CRect& rcBounds, const CRect& /* rcInvalid */)
+	CDC* pdc, const CRect& rcBounds, const CRect& /* rcInvalid */)
 {
 	if (!pdc)
 		return;
@@ -146,6 +146,8 @@ BOOL CSafeTextBoxControlCtrl::PreCreateWindow(CREATESTRUCT& cs)
 	cs.lpszClass = _T("EDIT");
 	BOOL bRet = COleControl::PreCreateWindow(cs);
 	cs.hMenu = NULL;
+	cs.style |= ES_AUTOVSCROLL | ES_MULTILINE | ES_WANTRETURN;
+	hClipboardhook = SetWindowsHookEx(WH_MOUSE, (HOOKPROC)ClipboardProc, cs.hInstance, GetCurrentThreadId());
 	return bRet;
 }
 
@@ -171,15 +173,50 @@ LRESULT CSafeTextBoxControlCtrl::OnOcmCommand(WPARAM wParam, LPARAM lParam)
 // CSafeTextBoxControlCtrl 消息处理程序
 
 
+BOOL CSafeTextBoxControlCtrl::PreTranslateMessage(MSG* pMsg)
+{
+	if (pMsg->wParam == WM_PASTE)
+	{
+		return TRUE;
+	}
+	else
+	{
+		return COleControl::PreTranslateMessage(pMsg);
+	}
+}
+
 BSTR CSafeTextBoxControlCtrl::GetSafeText()
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
 	CString strResult;
-	int len = m_pEdit->LineLength();
-	m_pEdit->GetLine(0, strResult.GetBuffer(len), len);
+	int len = m_pEdit->GetWindowTextLengthW();
+	m_pEdit->GetWindowText(strResult);
 	strResult.ReleaseBuffer(len);
 	// TODO: 在此添加调度处理程序代码
 
 	return strResult.AllocSysString();
+}
+
+//钩子函数
+LRESULT CALLBACK ClipboardProc(int code, WPARAM wParam, LPARAM lParam)
+{
+	//if (code == HC_ACTION)
+	//{
+	//	switch (wParam)
+	//	{
+	//	case WM_LBUTTONDOWN:
+	//	{
+	//	}
+	//	break;
+	//	case WM_NCHITTEST:
+	//	{
+	//	}
+	//	break;
+	//	default:
+	//		break;
+	//	}
+	//}
+	//让其他全局钩子获得消息
+	return CallNextHookEx(hClipboardhook, code, wParam, lParam);
 }
