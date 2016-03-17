@@ -1,0 +1,49 @@
+// SafeTextBoxControl.idl : ActiveX 控件项目的类型库源。
+
+// 此文件将由 MIDL 编译器工具处理以
+// 产生类型库(SafeTextBoxControl.tlb)，该类型库将成为
+// SafeTextBoxControl.ocx.
+
+#include <olectl.h>
+#include <idispids.h>
+
+[ uuid(ABF3C0AE-1676-4400-A0E0-124F56029AB7), version(1.0),
+  control ]
+library SafeTextBoxControlLib
+{
+	importlib(STDOLE_TLB);
+
+	//  CSafeTextBoxControlCtrl 的主调度接口
+	[ 
+		uuid(0487D719-A782-45CD-BDAF-6EF882EED5A5)	
+	]
+	dispinterface _DSafeTextBoxControl
+	{
+		properties:
+		methods:
+	};
+
+	//  CSafeTextBoxControlCtrl 的事件调度接口
+
+	[ 
+		uuid(24EF5A59-FEC2-494D-A66D-AAA14A27DA40)	
+	]
+	dispinterface _DSafeTextBoxControlEvents
+	{
+		properties:
+			//  事件接口没有任何属性
+
+		methods:
+	};
+
+	//  CSafeTextBoxControlCtrl 的类信息
+	[
+		uuid(50918D37-C96C-48DE-A3B3-AC04AA89D092)
+	]
+	coclass SafeTextBoxControl
+	{
+		[default] dispinterface _DSafeTextBoxControl;
+		[default, source] dispinterface _DSafeTextBoxControlEvents;
+	};
+
+};
