@@ -7,7 +7,7 @@
 #include <olectl.h>
 #include <idispids.h>
 
-[ uuid(B606A90E-BCA9-402E-8938-C58DB28AB81F), version(1.0),
+[ uuid(B67B4780-D0E1-4017-9625-D8F1234092E9), version(1.0),
   control ]
 library SafeTextBoxControlLib
 {
@@ -15,18 +15,19 @@ library SafeTextBoxControlLib
 
 	//  CSafeTextBoxControlCtrl 的主调度接口
 	[ 
-		uuid(261FD803-3037-4D70-9C93-72B71965D100)	
+		uuid(DE709E5D-8662-4A83-9273-0AF359B91AB1)	
 	]
 	dispinterface _DSafeTextBoxControl
 	{
 		properties:
-		methods:
+			[id(1)] BSTR SafeText;
+	methods:
 	};
 
 	//  CSafeTextBoxControlCtrl 的事件调度接口
 
 	[ 
-		uuid(BB6E9CD7-4898-4140-A311-D6E9CAAA9555)	
+		uuid(AD32A0DC-6667-45F0-9C64-F08C262C9372)	
 	]
 	dispinterface _DSafeTextBoxControlEvents
 	{
@@ -38,7 +39,7 @@ library SafeTextBoxControlLib
 
 	//  CSafeTextBoxControlCtrl 的类信息
 	[
-		uuid(98D55AFE-2E8B-4E93-9AD7-54EB5EAF31F5)
+		uuid(0D40C51E-2774-4FF7-9462-57091653AA87)
 	]
 	coclass SafeTextBoxControl
 	{

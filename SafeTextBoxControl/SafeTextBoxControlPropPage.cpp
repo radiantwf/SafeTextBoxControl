@@ -18,7 +18,7 @@ END_MESSAGE_MAP()
 // 初始化类工厂和 guid
 
 IMPLEMENT_OLECREATE_EX(CSafeTextBoxControlPropPage, "SAFETEXTBOXCON.SafeTextBoxConPropPage.1",
-	0xae3697f6, 0xc3c6, 0x450c, 0xa2, 0x92, 0x1c, 0x6d, 0x8a, 0x7a, 0x55, 0x4a)
+	0x308b39e7, 0xedf3, 0x4263, 0xa6, 0x55, 0xbe, 0x8a, 0x24, 0x75, 0x1a, 0xb0)
 
 // CSafeTextBoxControlPropPage::CSafeTextBoxControlPropPageFactory::UpdateRegistry -
 // 添加或移除 CSafeTextBoxControlPropPage 的系统注册表项

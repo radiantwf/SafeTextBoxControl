@@ -15,12 +15,14 @@ IMPLEMENT_DYNCREATE(CSafeTextBoxControlCtrl, COleControl)
 // 消息映射
 
 BEGIN_MESSAGE_MAP(CSafeTextBoxControlCtrl, COleControl)
+	ON_MESSAGE(OCM_COMMAND, &CSafeTextBoxControlCtrl::OnOcmCommand)
 	ON_OLEVERB(AFX_IDS_VERB_PROPERTIES, OnProperties)
 END_MESSAGE_MAP()
 
 // 调度映射
 
 BEGIN_DISPATCH_MAP(CSafeTextBoxControlCtrl, COleControl)
+	DISP_PROPERTY_EX_ID(CSafeTextBoxControlCtrl, "SafeText", dispidSafeText, GetSafeText, SetNotSupported, VT_BSTR)
 END_DISPATCH_MAP()
 
 // 事件映射
@@ -38,7 +40,7 @@ END_PROPPAGEIDS(CSafeTextBoxControlCtrl)
 // 初始化类工厂和 guid
 
 IMPLEMENT_OLECREATE_EX(CSafeTextBoxControlCtrl, "SAFETEXTBOXCONTR.SafeTextBoxContrCtrl.1",
-	0x98d55afe, 0x2e8b, 0x4e93, 0x9a, 0xd7, 0x54, 0xeb, 0x5e, 0xaf, 0x31, 0xf5)
+	0xd40c51e, 0x2774, 0x4ff7, 0x94, 0x62, 0x57, 0x9, 0x16, 0x53, 0xaa, 0x87)
 
 // 键入库 ID 和版本
 
@@ -46,8 +48,8 @@ IMPLEMENT_OLETYPELIB(CSafeTextBoxControlCtrl, _tlid, _wVerMajor, _wVerMinor)
 
 // 接口 ID
 
-const IID IID_DSafeTextBoxControl = { 0x261FD803, 0x3037, 0x4D70, { 0x9C, 0x93, 0x72, 0xB7, 0x19, 0x65, 0xD1, 0x0 } };
-const IID IID_DSafeTextBoxControlEvents = { 0xBB6E9CD7, 0x4898, 0x4140, { 0xA3, 0x11, 0xD6, 0xE9, 0xCA, 0xAA, 0x95, 0x55 } };
+const IID IID_DSafeTextBoxControl = { 0xDE709E5D, 0x8662, 0x4A83, { 0x92, 0x73, 0xA, 0xF3, 0x59, 0xB9, 0x1A, 0xB1 } };
+const IID IID_DSafeTextBoxControlEvents = { 0xAD32A0DC, 0x6667, 0x45F0, { 0x9C, 0x64, 0xF0, 0x8C, 0x26, 0x2C, 0x93, 0x72 } };
 
 // 控件类型信息
 
@@ -94,6 +96,7 @@ CSafeTextBoxControlCtrl::CSafeTextBoxControlCtrl()
 {
 	InitializeIIDs(&IID_DSafeTextBoxControl, &IID_DSafeTextBoxControlEvents);
 	// TODO:  在此初始化控件的实例数据。
+	m_pEdit = (CEdit*)this;
 }
 
 // CSafeTextBoxControlCtrl::~CSafeTextBoxControlCtrl - 析构函数
@@ -104,17 +107,14 @@ CSafeTextBoxControlCtrl::~CSafeTextBoxControlCtrl()
 }
 
 // CSafeTextBoxControlCtrl::OnDraw - 绘图函数
-#define  IDC_EDIT1 1000
+
 void CSafeTextBoxControlCtrl::OnDraw(
 			CDC* pdc, const CRect& rcBounds, const CRect& /* rcInvalid */)
 {
 	if (!pdc)
 		return;
 
-	// TODO:  用您自己的绘图代码替换下面的代码。
-	m_Edit.Create(WS_CHILD, rcBounds, this, IDC_EDIT1);
-	//pdc->FillRect(rcBounds, CBrush::FromHandle((HBRUSH)GetStockObject(WHITE_BRUSH)));
-	//pdc->Ellipse(rcBounds);
+	DoSuperclassPaint(pdc, rcBounds);
 }
 
 // CSafeTextBoxControlCtrl::DoPropExchange - 持久性支持
@@ -138,4 +138,48 @@ void CSafeTextBoxControlCtrl::OnResetState()
 }
 
 
+// CSafeTextBoxControlCtrl::PreCreateWindow - 修改 CreateWindowEx 的参数
+
+BOOL CSafeTextBoxControlCtrl::PreCreateWindow(CREATESTRUCT& cs)
+{
+	cs.lpszClass = _T("EDIT");
+	BOOL bRet = COleControl::PreCreateWindow(cs);
+	cs.hMenu = NULL;
+	ModifyStyle(WS_VSCROLL | ES_AUTOVSCROLL | ES_MULTILINE | ES_WANTRETURN, 0);
+	return bRet;
+}
+
+// CSafeTextBoxControlCtrl::IsSubclassedControl - 这是一个子类控件
+
+BOOL CSafeTextBoxControlCtrl::IsSubclassedControl()
+{
+	return TRUE;
+}
+
+// CSafeTextBoxControlCtrl::OnOcmCommand - 处理命令消息
+
+LRESULT CSafeTextBoxControlCtrl::OnOcmCommand(WPARAM wParam, LPARAM lParam)
+{
+	WORD wNotifyCode = HIWORD(wParam);
+
+	// TODO:  在此接通 wNotifyCode。
+
+	return 0;
+}
+
+
 // CSafeTextBoxControlCtrl 消息处理程序
+
+
+BSTR CSafeTextBoxControlCtrl::GetSafeText()
+{
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
+
+	CString strResult;
+	int len = m_pEdit->LineLength();
+	m_pEdit->GetLine(0, strResult.GetBuffer(len), len);
+	strResult.ReleaseBuffer(len);
+	// TODO: 在此添加调度处理程序代码
+
+	return strResult.AllocSysString();
+}

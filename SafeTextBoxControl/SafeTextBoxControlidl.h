@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 7.00.0555 */
-/* at Thu Mar 17 22:21:49 2016
+/* at Fri Mar 18 00:43:26 2016
  */
 /* Compiler settings for SafeTextBoxControl.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 7.00.0555 
@@ -91,7 +91,7 @@ EXTERN_C const IID DIID__DSafeTextBoxControl;
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
 
-    MIDL_INTERFACE("261FD803-3037-4D70-9C93-72B71965D100")
+    MIDL_INTERFACE("DE709E5D-8662-4A83-9273-0AF359B91AB1")
     _DSafeTextBoxControl : public IDispatch
     {
     };
@@ -198,7 +198,7 @@ EXTERN_C const IID DIID__DSafeTextBoxControlEvents;
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
 
-    MIDL_INTERFACE("BB6E9CD7-4898-4140-A311-D6E9CAAA9555")
+    MIDL_INTERFACE("AD32A0DC-6667-45F0-9C64-F08C262C9372")
     _DSafeTextBoxControlEvents : public IDispatch
     {
     };
@@ -298,7 +298,7 @@ EXTERN_C const CLSID CLSID_SafeTextBoxControl;
 
 #ifdef __cplusplus
 
-class DECLSPEC_UUID("98D55AFE-2E8B-4E93-9AD7-54EB5EAF31F5")
+class DECLSPEC_UUID("0D40C51E-2774-4FF7-9462-57091653AA87")
 SafeTextBoxControl;
 #endif
 #endif /* __SafeTextBoxControlLib_LIBRARY_DEFINED__ */
