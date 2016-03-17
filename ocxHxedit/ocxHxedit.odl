@@ -1,0 +1,72 @@
+// ocxHxedit.odl : type library source for ActiveX Control project.
+
+// This file will be processed by the Make Type Library (mktyplib) tool to
+// produce the type library (ocxHxedit.tlb) that will become a resource in
+// ocxHxedit.ocx.
+
+#include <olectl.h>
+#include <idispids.h>
+
+[ uuid(4C689A97-1735-4818-8AE3-55FE1AC147A3), version(1.0),
+  helpfile("ocxHxedit.hlp"),
+  helpstring("ocxHxedit ActiveX Control module"),
+  control ]
+library OCXHXEDITLib
+{
+	importlib(STDOLE_TLB);
+	importlib(STDTYPE_TLB);
+
+	//  Primary dispatch interface for COcxHxeditCtrl
+
+	[ uuid(88546A0F-8B69-435C-896E-D494FD821009),
+	  helpstring("Dispatch interface for OcxHxedit Control"), hidden ]
+	dispinterface _DOcxHxedit
+	{
+		properties:
+			// NOTE - ClassWizard will maintain property information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_PROP(COcxHxeditCtrl)
+			[id(1)] boolean pwdStatue;
+			//}}AFX_ODL_PROP
+
+		methods:
+			// NOTE - ClassWizard will maintain method information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_METHOD(COcxHxeditCtrl)
+			[id(2)] BSTR GetPwdText();                   //获取原始密码串
+			[id(3)] BSTR GetDonePwd();                   //获取加密后的密码串
+			[id(4)] void SetPwdStyle(boolean pwdStyle);  //指定控件显示明文还是密码符号"*"
+			[id(5)] void SetStatues();
+			//}}AFX_ODL_METHOD
+	};
+
+	//  Event dispatch interface for COcxHxeditCtrl
+
+	[ uuid(61F34F35-4B72-4521-8980-C74C90BCFEA9),
+	  helpstring("Event interface for OcxHxedit Control") ]
+	dispinterface _DOcxHxeditEvents
+	{
+		properties:
+			//  Event interface has no properties
+
+		methods:
+			// NOTE - ClassWizard will maintain event information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_EVENT(COcxHxeditCtrl)
+			//}}AFX_ODL_EVENT
+	};
+
+	//  Class information for COcxHxeditCtrl
+
+	[ uuid(F8281B45-2419-4DC3-A483-BC67647EDA87),
+	  helpstring("OcxHxedit Control"), control ]
+	coclass OcxHxedit
+	{
+		[default] dispinterface _DOcxHxedit;
+		[default, source] dispinterface _DOcxHxeditEvents;
+	};
+
+
+	//{{AFX_APPEND_ODL}}
+	//}}AFX_APPEND_ODL}}
+};

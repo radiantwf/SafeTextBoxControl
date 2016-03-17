@@ -97,6 +97,7 @@ CSafeTextBoxControlCtrl::CSafeTextBoxControlCtrl()
 	InitializeIIDs(&IID_DSafeTextBoxControl, &IID_DSafeTextBoxControlEvents);
 	// TODO:  在此初始化控件的实例数据。
 	m_pEdit = (CEdit*)this;
+	ModifyStyle(WS_VSCROLL | ES_AUTOVSCROLL | ES_MULTILINE | ES_WANTRETURN, 0);
 }
 
 // CSafeTextBoxControlCtrl::~CSafeTextBoxControlCtrl - 析构函数
@@ -145,7 +146,6 @@ BOOL CSafeTextBoxControlCtrl::PreCreateWindow(CREATESTRUCT& cs)
 	cs.lpszClass = _T("EDIT");
 	BOOL bRet = COleControl::PreCreateWindow(cs);
 	cs.hMenu = NULL;
-	ModifyStyle(WS_VSCROLL | ES_AUTOVSCROLL | ES_MULTILINE | ES_WANTRETURN, 0);
 	return bRet;
 }
 
