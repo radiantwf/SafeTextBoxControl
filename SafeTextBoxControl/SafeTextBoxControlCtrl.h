@@ -15,7 +15,7 @@ public:
 
 // ≥…‘±
 private:
-	CEdit edit;
+	CEdit m_Edit;
 
 // ÷ÿ–¥
 public:

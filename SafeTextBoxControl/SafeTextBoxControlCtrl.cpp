@@ -104,7 +104,7 @@ CSafeTextBoxControlCtrl::~CSafeTextBoxControlCtrl()
 }
 
 // CSafeTextBoxControlCtrl::OnDraw - 绘图函数
-
+#define  IDC_EDIT1 1000
 void CSafeTextBoxControlCtrl::OnDraw(
 			CDC* pdc, const CRect& rcBounds, const CRect& /* rcInvalid */)
 {
@@ -112,8 +112,9 @@ void CSafeTextBoxControlCtrl::OnDraw(
 		return;
 
 	// TODO:  用您自己的绘图代码替换下面的代码。
-	pdc->FillRect(rcBounds, CBrush::FromHandle((HBRUSH)GetStockObject(WHITE_BRUSH)));
-	pdc->Ellipse(rcBounds);
+	m_Edit.Create(WS_CHILD, rcBounds, this, IDC_EDIT1);
+	//pdc->FillRect(rcBounds, CBrush::FromHandle((HBRUSH)GetStockObject(WHITE_BRUSH)));
+	//pdc->Ellipse(rcBounds);
 }
 
 // CSafeTextBoxControlCtrl::DoPropExchange - 持久性支持
