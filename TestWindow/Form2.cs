@@ -8,14 +8,14 @@ using System.Text;
 using System.Windows.Forms;
 
 namespace TestWindow {
-    public partial class Form1 : Form {
+    public partial class Form2: Form {
         AxSafeTextBoxControlLib.AxSafeTextBoxControl SafeTextBox1 = null;
         AxSafeTextBoxControlLib.AxSafeTextBoxControl SafeTextBox2 = null;
-        public Form1() {
+        public Form2() {
             InitializeComponent();
         }
 
-        private void Form1_Shown(object sender, EventArgs e) {
+        private void Form2_Shown(object sender, EventArgs e) {
             SafeTextBox1 = new AxSafeTextBoxControlLib.AxSafeTextBoxControl();
             panel1.Controls.Add(SafeTextBox1);
             SafeTextBox2 = new AxSafeTextBoxControlLib.AxSafeTextBoxControl();
@@ -26,11 +26,6 @@ namespace TestWindow {
 
         private void button1_Click(object sender, EventArgs e) {
             MessageBox.Show(SafeTextBox1.SafeText);
-        }
-
-        private void button2_Click(object sender, EventArgs e) {
-            Form2 form2 = new Form2();
-            form2.Show(); 
         }
     }
 }

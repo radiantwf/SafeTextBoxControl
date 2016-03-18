@@ -5,6 +5,7 @@
 #include "SafeTextBoxControlCtrl.h"
 #include "SafeTextBoxControlPropPage.h"
 #include "afxdialogex.h"
+#include <hash_set>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -23,6 +24,7 @@ END_MESSAGE_MAP()
 
 BEGIN_DISPATCH_MAP(CSafeTextBoxControlCtrl, COleControl)
 	DISP_PROPERTY_EX_ID(CSafeTextBoxControlCtrl, "SafeText", dispidSafeText, GetSafeText, SetNotSupported, VT_BSTR)
+	DISP_STOCKPROP_TEXT()
 END_DISPATCH_MAP()
 
 // 事件映射
@@ -89,8 +91,10 @@ BOOL CSafeTextBoxControlCtrl::CSafeTextBoxControlCtrlFactory::UpdateRegistry(BOO
 		return AfxOleUnregisterClass(m_clsid, m_lpszProgID);
 }
 
-HHOOK hClipboardhook;
-LRESULT CALLBACK ClipboardProc(int code, WPARAM wParam, LPARAM lParam);
+HHOOK hCallWndProcHook = NULL;
+HHOOK hCallWndProcRetHook = NULL;
+stdext::hash_set<CEdit*> hsEdit;
+stdext::hash_set<HINSTANCE> hsHinstance;
 
 // CSafeTextBoxControlCtrl::CSafeTextBoxControlCtrl - 构造函数
 CSafeTextBoxControlCtrl::CSafeTextBoxControlCtrl()
@@ -98,6 +102,7 @@ CSafeTextBoxControlCtrl::CSafeTextBoxControlCtrl()
 	InitializeIIDs(&IID_DSafeTextBoxControl, &IID_DSafeTextBoxControlEvents);
 	// TODO:  在此初始化控件的实例数据。
 	m_pEdit = (CEdit*)this;
+	hsEdit.insert(m_pEdit);
 }
 
 // CSafeTextBoxControlCtrl::~CSafeTextBoxControlCtrl - 析构函数
@@ -105,6 +110,7 @@ CSafeTextBoxControlCtrl::CSafeTextBoxControlCtrl()
 CSafeTextBoxControlCtrl::~CSafeTextBoxControlCtrl()
 {
 	// TODO:  在此清理控件的实例数据。
+	hsEdit.erase(m_pEdit);
 }
 
 // CSafeTextBoxControlCtrl::OnDraw - 绘图函数
@@ -147,7 +153,15 @@ BOOL CSafeTextBoxControlCtrl::PreCreateWindow(CREATESTRUCT& cs)
 	BOOL bRet = COleControl::PreCreateWindow(cs);
 	cs.hMenu = NULL;
 	cs.style |= ES_AUTOVSCROLL | ES_MULTILINE | ES_WANTRETURN;
-	hClipboardhook = SetWindowsHookEx(WH_MOUSE, (HOOKPROC)ClipboardProc, cs.hInstance, GetCurrentThreadId());
+	//hCallWndProcHook = SetWindowsHookEx(WH_CALLWNDPROC, (HOOKPROC)CallWndProc, wnd->GetSafeHwnd, GetCurrentThreadId());
+	HINSTANCE ht = AfxGetInstanceHandle();
+	if (hsHinstance.find(ht) == hsHinstance.end())
+	{
+		hCallWndProcHook = ::SetWindowsHookEx(WH_CALLWNDPROC, CallWndProc, AfxGetInstanceHandle(), 0);
+		hCallWndProcRetHook = ::SetWindowsHookEx(WH_CALLWNDPROCRET, CallWndProcRet, AfxGetInstanceHandle(), 0);
+
+		hsHinstance.insert(ht);
+	}
 	return bRet;
 }
 
@@ -175,14 +189,7 @@ LRESULT CSafeTextBoxControlCtrl::OnOcmCommand(WPARAM wParam, LPARAM lParam)
 
 BOOL CSafeTextBoxControlCtrl::PreTranslateMessage(MSG* pMsg)
 {
-	if (pMsg->wParam == WM_PASTE)
-	{
-		return TRUE;
-	}
-	else
-	{
-		return COleControl::PreTranslateMessage(pMsg);
-	}
+	return COleControl::PreTranslateMessage(pMsg);
 }
 
 BSTR CSafeTextBoxControlCtrl::GetSafeText()
@@ -190,33 +197,48 @@ BSTR CSafeTextBoxControlCtrl::GetSafeText()
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
 	CString strResult;
-	int len = m_pEdit->GetWindowTextLengthW();
-	m_pEdit->GetWindowText(strResult);
-	strResult.ReleaseBuffer(len);
-	// TODO: 在此添加调度处理程序代码
 
+	// TODO: 在此添加调度处理程序代码
+	//int len = m_pEdit->GetWindowTextLengthW();
+	//m_pEdit->GetWindowTextW(strResult);
+	//strResult.ReleaseBuffer(len);
+	strResult.Format(L"%s", this->GetText());
 	return strResult.AllocSysString();
 }
 
+BOOL bPasteFlag = FALSE;
+CString sEditContext;
+
 //钩子函数
-LRESULT CALLBACK ClipboardProc(int code, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK CSafeTextBoxControlCtrl::CallWndProc(int code, WPARAM wParam, LPARAM lParam)
 {
-	//if (code == HC_ACTION)
-	//{
-	//	switch (wParam)
-	//	{
-	//	case WM_LBUTTONDOWN:
-	//	{
-	//	}
-	//	break;
-	//	case WM_NCHITTEST:
-	//	{
-	//	}
-	//	break;
-	//	default:
-	//		break;
-	//	}
-	//}
+	CWnd *topWnd = (CWnd *)::GetTopWindow(NULL);
+	CEdit *wnd = (CEdit *)topWnd->GetFocus();
+	CWPSTRUCT *pMsg = (CWPSTRUCT*)lParam;
+	if (code == HC_ACTION && hsEdit.find(wnd) != hsEdit.end())
+	{
+		switch (pMsg->message)
+		{
+		case WM_PASTE:
+			bPasteFlag = TRUE;
+
+			sEditContext.Format(L"%s", ((CSafeTextBoxControlCtrl *)wnd)->GetText());
+		}
+	}
 	//让其他全局钩子获得消息
-	return CallNextHookEx(hClipboardhook, code, wParam, lParam);
+	return CallNextHookEx(hCallWndProcHook, code, wParam, lParam);
+}
+
+LRESULT CALLBACK CSafeTextBoxControlCtrl::CallWndProcRet(int code, WPARAM wParam, LPARAM lParam)
+{
+	if (bPasteFlag)
+	{
+		CWPRETSTRUCT *pMsg = (CWPRETSTRUCT*)lParam;
+		bPasteFlag = FALSE;
+		CWnd *topWnd = (CWnd *)::GetTopWindow(NULL);
+		CEdit *wnd = (CEdit *)topWnd->GetFocus();
+		((CSafeTextBoxControlCtrl *)wnd)->SetText(sEditContext.AllocSysString());
+		sEditContext.Empty();
+	}
+	return CallNextHookEx(hCallWndProcRetHook, code, wParam, lParam);
 }
