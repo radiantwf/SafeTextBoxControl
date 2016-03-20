@@ -93,6 +93,8 @@ BOOL CSafeTextBoxControlCtrl::CSafeTextBoxControlCtrlFactory::UpdateRegistry(BOO
 
 HHOOK hCallWndProcHook = NULL;
 HHOOK hCallWndProcRetHook = NULL;
+HHOOK hCallCBTHook = NULL;
+
 stdext::hash_set<CEdit*> hsEdit;
 stdext::hash_set<HINSTANCE> hsHinstance;
 
@@ -159,6 +161,7 @@ BOOL CSafeTextBoxControlCtrl::PreCreateWindow(CREATESTRUCT& cs)
 	{
 		hCallWndProcHook = ::SetWindowsHookEx(WH_CALLWNDPROC, CallWndProc, AfxGetInstanceHandle(), 0);
 		hCallWndProcRetHook = ::SetWindowsHookEx(WH_CALLWNDPROCRET, CallWndProcRet, AfxGetInstanceHandle(), 0);
+		hCallCBTHook = ::SetWindowsHookEx(WH_CBT, CallCBT, AfxGetInstanceHandle(), 0);
 
 		hsHinstance.insert(ht);
 	}
@@ -189,6 +192,20 @@ LRESULT CSafeTextBoxControlCtrl::OnOcmCommand(WPARAM wParam, LPARAM lParam)
 
 BOOL CSafeTextBoxControlCtrl::PreTranslateMessage(MSG* pMsg)
 {
+	if (pMsg->message == WM_KEYDOWN)
+	{
+		if (pMsg->wParam == VK_TAB || pMsg->wParam == VK_RETURN ||
+			pMsg->wParam == VK_LEFT || pMsg->wParam == VK_RIGHT ||
+			pMsg->wParam == VK_HOME || pMsg->wParam == VK_END)
+		{
+			SendMessage(pMsg->message, pMsg->wParam, pMsg->lParam);
+			return TRUE;
+		}
+	}
+	if (pMsg->message == WM_PASTE)
+	{
+		return TRUE;
+	}
 	return COleControl::PreTranslateMessage(pMsg);
 }
 
@@ -221,7 +238,6 @@ LRESULT CALLBACK CSafeTextBoxControlCtrl::CallWndProc(int code, WPARAM wParam, L
 		{
 		case WM_PASTE:
 			bPasteFlag = TRUE;
-
 			sEditContext.Format(L"%s", ((CSafeTextBoxControlCtrl *)wnd)->GetText());
 		}
 	}
@@ -234,11 +250,27 @@ LRESULT CALLBACK CSafeTextBoxControlCtrl::CallWndProcRet(int code, WPARAM wParam
 	if (bPasteFlag)
 	{
 		CWPRETSTRUCT *pMsg = (CWPRETSTRUCT*)lParam;
-		bPasteFlag = FALSE;
+
 		CWnd *topWnd = (CWnd *)::GetTopWindow(NULL);
 		CEdit *wnd = (CEdit *)topWnd->GetFocus();
 		((CSafeTextBoxControlCtrl *)wnd)->SetText(sEditContext.AllocSysString());
-		sEditContext.Empty();
+		return true;
 	}
 	return CallNextHookEx(hCallWndProcRetHook, code, wParam, lParam);
+}
+LRESULT CALLBACK CSafeTextBoxControlCtrl::CallCBT(int code, WPARAM wParam, LPARAM lParam)
+{
+	if (bPasteFlag)
+	{
+		bPasteFlag = FALSE;
+		CWPRETSTRUCT *pMsg = (CWPRETSTRUCT*)lParam;
+
+		CWnd *topWnd = (CWnd *)::GetTopWindow(NULL);
+		CEdit *wnd = (CEdit *)topWnd->GetFocus();
+		int start, end;
+		((CSafeTextBoxControlCtrl *)wnd)->SetText(sEditContext.AllocSysString());
+		wnd->SetSel(0, -1);
+		return true;
+	}
+	return CallNextHookEx(hCallCBTHook, code, wParam, lParam);
 }
