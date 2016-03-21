@@ -1,0 +1,5 @@
+LIBRARY	"CryptoLibrary"
+
+EXPORTS
+	HISIGN_Encrypt		@1
+	HISIGN_Decrypt		@2

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestWindow", "TestWindow\TestWindow.csproj", "{BBC70448-FE9C-4BDD-9010-49636E8F3FAB}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -11,6 +11,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SafeTextBoxControl", "SafeTextBoxControl\SafeTextBoxControl.vcxproj", "{7395FB77-F929-4C7A-913C-40E1CE54D174}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ocxHxedit", "ocxHxedit\ocxHxedit.vcxproj", "{75DC53CA-8C69-490C-A298-AFDB05D9FE2D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CryptoLibrary", "CryptoLibrary\CryptoLibrary.vcxproj", "{0C9A1EB3-CF1A-47A1-B8B6-E69ED470FD21}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -92,6 +94,28 @@ Global
 		{75DC53CA-8C69-490C-A298-AFDB05D9FE2D}.Unicode Release|x64.ActiveCfg = Unicode Release|Win32
 		{75DC53CA-8C69-490C-A298-AFDB05D9FE2D}.Unicode Release|x86.ActiveCfg = Unicode Release|Win32
 		{75DC53CA-8C69-490C-A298-AFDB05D9FE2D}.Unicode Release|x86.Build.0 = Unicode Release|Win32
+		{0C9A1EB3-CF1A-47A1-B8B6-E69ED470FD21}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{0C9A1EB3-CF1A-47A1-B8B6-E69ED470FD21}.Debug|x64.ActiveCfg = Debug|x64
+		{0C9A1EB3-CF1A-47A1-B8B6-E69ED470FD21}.Debug|x64.Build.0 = Debug|x64
+		{0C9A1EB3-CF1A-47A1-B8B6-E69ED470FD21}.Debug|x86.ActiveCfg = Debug|Win32
+		{0C9A1EB3-CF1A-47A1-B8B6-E69ED470FD21}.Debug|x86.Build.0 = Debug|Win32
+		{0C9A1EB3-CF1A-47A1-B8B6-E69ED470FD21}.Release|Any CPU.ActiveCfg = Release|Win32
+		{0C9A1EB3-CF1A-47A1-B8B6-E69ED470FD21}.Release|x64.ActiveCfg = Release|x64
+		{0C9A1EB3-CF1A-47A1-B8B6-E69ED470FD21}.Release|x64.Build.0 = Release|x64
+		{0C9A1EB3-CF1A-47A1-B8B6-E69ED470FD21}.Release|x86.ActiveCfg = Release|Win32
+		{0C9A1EB3-CF1A-47A1-B8B6-E69ED470FD21}.Release|x86.Build.0 = Release|Win32
+		{0C9A1EB3-CF1A-47A1-B8B6-E69ED470FD21}.Unicode Debug|Any CPU.ActiveCfg = Release|x64
+		{0C9A1EB3-CF1A-47A1-B8B6-E69ED470FD21}.Unicode Debug|Any CPU.Build.0 = Release|x64
+		{0C9A1EB3-CF1A-47A1-B8B6-E69ED470FD21}.Unicode Debug|x64.ActiveCfg = Debug|x64
+		{0C9A1EB3-CF1A-47A1-B8B6-E69ED470FD21}.Unicode Debug|x64.Build.0 = Debug|x64
+		{0C9A1EB3-CF1A-47A1-B8B6-E69ED470FD21}.Unicode Debug|x86.ActiveCfg = Debug|Win32
+		{0C9A1EB3-CF1A-47A1-B8B6-E69ED470FD21}.Unicode Debug|x86.Build.0 = Debug|Win32
+		{0C9A1EB3-CF1A-47A1-B8B6-E69ED470FD21}.Unicode Release|Any CPU.ActiveCfg = Release|x64
+		{0C9A1EB3-CF1A-47A1-B8B6-E69ED470FD21}.Unicode Release|Any CPU.Build.0 = Release|x64
+		{0C9A1EB3-CF1A-47A1-B8B6-E69ED470FD21}.Unicode Release|x64.ActiveCfg = Release|x64
+		{0C9A1EB3-CF1A-47A1-B8B6-E69ED470FD21}.Unicode Release|x64.Build.0 = Release|x64
+		{0C9A1EB3-CF1A-47A1-B8B6-E69ED470FD21}.Unicode Release|x86.ActiveCfg = Release|Win32
+		{0C9A1EB3-CF1A-47A1-B8B6-E69ED470FD21}.Unicode Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
