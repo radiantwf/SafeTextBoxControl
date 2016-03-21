@@ -55,9 +55,11 @@ protected:
 public:
 	enum {
 		dispidSafeText = 1L,
+		dispidSafeKey = 2L,
 	};
 	
 protected:
 	BSTR GetSafeText();
+	CString m_SafeKey;
 };
 

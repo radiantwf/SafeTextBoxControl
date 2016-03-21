@@ -21,6 +21,7 @@ library SafeTextBoxControlLib
 	{
 		properties:
 			[id(1)] BSTR SafeText;
+			[id(2)] BSTR SafeKey;
 	methods:
 	};
 

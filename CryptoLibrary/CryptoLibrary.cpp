@@ -2,6 +2,8 @@
 //
 
 #include "StdAfx.h"
+#include <iostream> 
+#include <stdio.h>  
 #include "CryptoLibrary.h"
 #include "APHash.h"
 #include "AES.h"
@@ -10,12 +12,83 @@
 #define AES_KEY_LEGNTH sizeof(unsigned int) * 8
 #define HASH_LEGNTH sizeof(unsigned int) * 8
 
-unsigned char * __stdcall HISIGN_Encrypt(const unsigned char * key, const unsigned char * str)
+
+int getAesKey(const char* userKey, char *aesKey)
 {
-	return nullptr;
+
+	unsigned int hash = 0;
+	if (userKey && *userKey != 0)
+	{
+		hash = APHash((char *)userKey);
+	}
+	else
+	{
+		hash = APHash("nokey");
+	}
+
+	sprintf_s(aesKey, AES_KEY_LEGNTH, "%u", hash);
+
+	return ERROR_SUCCESS;
 }
 
-unsigned char * __stdcall HISIGN_Decrypt(const unsigned char * key, const unsigned char * str)
+char * __stdcall HISIGN_Encrypt(char * key, char * str)
 {
-	return nullptr;
+	if (!str && *str == 0)
+		return NULL;
+	char tmpKey[AES_KEY_LEGNTH];
+
+	int ret = getAesKey(key, tmpKey);
+	if (ret != ERROR_SUCCESS)
+	{
+		return NULL;
+	}
+
+	// 加密
+	unsigned char aesKey[8];
+	memcpy(aesKey, tmpKey + 4, 8);
+	AES aes((unsigned char *)aesKey);
+
+	int strLength = strlen(str);
+	int tmpStrLength = (strlen(str) + 15) / 16 * 16;
+	char *tmpStr = new char[tmpStrLength];
+	memset(tmpStr, 0x00, tmpStrLength);
+	memcpy_s(tmpStr, tmpStrLength, str, strLength);
+	aes.Cipher(tmpStr, tmpStrLength);
+
+	char *encryptoStr = new char[tmpStrLength * 2];
+	// 格式化输出
+	CBase64 base64;
+	int realLength = base64.EncodeBase64((unsigned char *)tmpStr, encryptoStr, tmpStrLength, tmpStrLength * 2);
+	*(encryptoStr + realLength) = 0x00;
+	return encryptoStr;
+}
+
+char * __stdcall HISIGN_Decrypt(char * key, char * str)
+{
+	if (!str && *str == 0)
+		return NULL;
+	char tmpKey[AES_KEY_LEGNTH];
+
+	int ret = getAesKey(key, tmpKey);
+	if (ret != ERROR_SUCCESS)
+	{
+		return NULL;
+	}
+
+	// 加密
+	unsigned char aesKey[8];
+	memcpy(aesKey, tmpKey + 4, 8);
+	AES aes((unsigned char *)aesKey);
+
+	int strLength = strlen(str);
+	char *tmpStr = new char[strLength];
+	memset(tmpStr, 0x00, strLength);
+	memcpy_s(tmpStr, strLength, str, strLength);
+	char *decryptoStr = new char[strLength];
+
+	CBase64 base64;
+	int realLength = base64.DecodeBase64(tmpStr, (unsigned char *)decryptoStr, strLength);
+	aes.InvCipher(decryptoStr, realLength);
+
+	return decryptoStr;
 }

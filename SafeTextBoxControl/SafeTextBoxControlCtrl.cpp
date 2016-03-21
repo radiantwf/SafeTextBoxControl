@@ -4,12 +4,19 @@
 #include "SafeTextBoxControl.h"
 #include "SafeTextBoxControlCtrl.h"
 #include "SafeTextBoxControlPropPage.h"
+#include "..\\CryptoLibrary\\CryptoLibrary.h"
 #include "afxdialogex.h"
 #include <hash_set>
+#include <comdef.h>
+#include <comutil.h>
+#include <stdio.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+
+#pragma comment(lib, "comsupp.lib")
+#pragma comment(lib, "..\\Debug\\CryptoLibrary.lib")
 
 IMPLEMENT_DYNCREATE(CSafeTextBoxControlCtrl, COleControl)
 
@@ -27,6 +34,7 @@ END_MESSAGE_MAP()
 BEGIN_DISPATCH_MAP(CSafeTextBoxControlCtrl, COleControl)
 	DISP_PROPERTY_EX_ID(CSafeTextBoxControlCtrl, "SafeText", dispidSafeText, GetSafeText, SetNotSupported, VT_BSTR)
 	DISP_STOCKPROP_TEXT()
+	DISP_PROPERTY_ID(CSafeTextBoxControlCtrl, "SafeKey", dispidSafeKey, m_SafeKey, VT_BSTR)
 END_DISPATCH_MAP()
 
 // 事件映射
@@ -107,6 +115,7 @@ CSafeTextBoxControlCtrl::CSafeTextBoxControlCtrl()
 	// TODO:  在此初始化控件的实例数据。
 	m_pEdit = (CEdit*)this;
 	//hsEdit.insert(m_pEdit);
+	m_SafeKey.Empty();
 }
 
 // CSafeTextBoxControlCtrl::~CSafeTextBoxControlCtrl - 析构函数
@@ -193,20 +202,6 @@ LRESULT CSafeTextBoxControlCtrl::OnOcmCommand(WPARAM wParam, LPARAM lParam)
 
 BOOL CSafeTextBoxControlCtrl::PreTranslateMessage(MSG* pMsg)
 {
-	if (pMsg->message == WM_KEYDOWN)
-	{
-		if (pMsg->wParam == VK_TAB || pMsg->wParam == VK_RETURN ||
-			pMsg->wParam == VK_LEFT || pMsg->wParam == VK_RIGHT ||
-			pMsg->wParam == VK_HOME || pMsg->wParam == VK_END)
-		{
-			SendMessage(pMsg->message, pMsg->wParam, pMsg->lParam);
-			return TRUE;
-		}
-	}
-	if (pMsg->message == WM_PASTE)
-	{
-		return TRUE;
-	}
 	return COleControl::PreTranslateMessage(pMsg);
 }
 
@@ -217,11 +212,17 @@ BSTR CSafeTextBoxControlCtrl::GetSafeText()
 	CString strResult;
 
 	// TODO: 在此添加调度处理程序代码
-	//int len = m_pEdit->GetWindowTextLengthW();
-	//m_pEdit->GetWindowTextW(strResult);
-	//strResult.ReleaseBuffer(len);
 	strResult.Format(L"%s", this->GetText());
-	return strResult.AllocSysString();
+	char* tmp = _com_util::ConvertBSTRToString(strResult.AllocSysString());
+	char* key =_com_util::ConvertBSTRToString(m_SafeKey.AllocSysString());
+	char* encryptStr = HISIGN_Encrypt(key, tmp);
+	BSTR encryptResult = CComBSTR(encryptStr);
+
+	char* encryptStr2 = _com_util::ConvertBSTRToString(encryptResult);
+	char *decryptStr = HISIGN_Decrypt(key, encryptStr2);
+
+	BSTR strResult3 = CComBSTR(decryptStr);
+	return strResult3;
 }
 
 

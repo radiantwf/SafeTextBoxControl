@@ -1,5 +1,5 @@
 
 #include "StdAfx.h"
 
-unsigned char * __stdcall HISIGN_Encrypt(const unsigned char *key, const unsigned char *str);
-unsigned char * __stdcall HISIGN_Decrypt(const unsigned char *key, const unsigned char *str);
+char * __stdcall HISIGN_Encrypt(char *key, char *str);
+char * __stdcall HISIGN_Decrypt(char *key, char *str);
