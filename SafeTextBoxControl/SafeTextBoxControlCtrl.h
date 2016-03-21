@@ -20,13 +20,14 @@ public:
 	virtual void DoPropExchange(CPropExchange* pPX);
 	virtual void OnResetState();
 	virtual BOOL CSafeTextBoxControlCtrl::PreTranslateMessage(MSG* pMsg);
-
+	virtual LRESULT OnPaste(WPARAM w, LPARAM l);
+	virtual LRESULT OnContextMenu(WPARAM w, LPARAM l);
 // 成员
 private:
 	CEdit *m_pEdit;
-	static LRESULT CALLBACK CallWndProc(int code, WPARAM wParam, LPARAM lParam);
-	static LRESULT CALLBACK CallWndProcRet(int code, WPARAM wParam, LPARAM lParam);
-	static LRESULT CALLBACK CallCBT(int code, WPARAM wParam, LPARAM lParam);
+	//static LRESULT CALLBACK CallWndProc(int code, WPARAM wParam, LPARAM lParam);
+	//static LRESULT CALLBACK CallWndProcRet(int code, WPARAM wParam, LPARAM lParam);
+	//static LRESULT CALLBACK CallCBT(int code, WPARAM wParam, LPARAM lParam);
 
 // 实现
 protected:

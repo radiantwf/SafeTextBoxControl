@@ -17,6 +17,8 @@ IMPLEMENT_DYNCREATE(CSafeTextBoxControlCtrl, COleControl)
 
 BEGIN_MESSAGE_MAP(CSafeTextBoxControlCtrl, COleControl)
 	ON_MESSAGE(OCM_COMMAND, &CSafeTextBoxControlCtrl::OnOcmCommand)
+	ON_MESSAGE(WM_PASTE, OnPaste)
+	ON_MESSAGE(WM_CONTEXTMENU, OnContextMenu)
 	ON_OLEVERB(AFX_IDS_VERB_PROPERTIES, OnProperties)
 END_MESSAGE_MAP()
 
@@ -91,12 +93,12 @@ BOOL CSafeTextBoxControlCtrl::CSafeTextBoxControlCtrlFactory::UpdateRegistry(BOO
 		return AfxOleUnregisterClass(m_clsid, m_lpszProgID);
 }
 
-HHOOK hCallWndProcHook = NULL;
-HHOOK hCallWndProcRetHook = NULL;
-HHOOK hCallCBTHook = NULL;
+//HHOOK hCallWndProcHook = NULL;
+//HHOOK hCallWndProcRetHook = NULL;
+//HHOOK hCallCBTHook = NULL;
 
-stdext::hash_set<CEdit*> hsEdit;
-stdext::hash_set<HINSTANCE> hsHinstance;
+//stdext::hash_set<CEdit*> hsEdit;
+//stdext::hash_set<HINSTANCE> hsHinstance;
 
 // CSafeTextBoxControlCtrl::CSafeTextBoxControlCtrl - 构造函数
 CSafeTextBoxControlCtrl::CSafeTextBoxControlCtrl()
@@ -104,7 +106,7 @@ CSafeTextBoxControlCtrl::CSafeTextBoxControlCtrl()
 	InitializeIIDs(&IID_DSafeTextBoxControl, &IID_DSafeTextBoxControlEvents);
 	// TODO:  在此初始化控件的实例数据。
 	m_pEdit = (CEdit*)this;
-	hsEdit.insert(m_pEdit);
+	//hsEdit.insert(m_pEdit);
 }
 
 // CSafeTextBoxControlCtrl::~CSafeTextBoxControlCtrl - 析构函数
@@ -112,7 +114,7 @@ CSafeTextBoxControlCtrl::CSafeTextBoxControlCtrl()
 CSafeTextBoxControlCtrl::~CSafeTextBoxControlCtrl()
 {
 	// TODO:  在此清理控件的实例数据。
-	hsEdit.erase(m_pEdit);
+	//hsEdit.erase(m_pEdit);
 }
 
 // CSafeTextBoxControlCtrl::OnDraw - 绘图函数
@@ -155,16 +157,15 @@ BOOL CSafeTextBoxControlCtrl::PreCreateWindow(CREATESTRUCT& cs)
 	BOOL bRet = COleControl::PreCreateWindow(cs);
 	cs.hMenu = NULL;
 	cs.style |= ES_AUTOVSCROLL | ES_MULTILINE | ES_WANTRETURN;
-	//hCallWndProcHook = SetWindowsHookEx(WH_CALLWNDPROC, (HOOKPROC)CallWndProc, wnd->GetSafeHwnd, GetCurrentThreadId());
-	HINSTANCE ht = AfxGetInstanceHandle();
-	if (hsHinstance.find(ht) == hsHinstance.end())
-	{
-		hCallWndProcHook = ::SetWindowsHookEx(WH_CALLWNDPROC, CallWndProc, AfxGetInstanceHandle(), 0);
-		hCallWndProcRetHook = ::SetWindowsHookEx(WH_CALLWNDPROCRET, CallWndProcRet, AfxGetInstanceHandle(), 0);
-		hCallCBTHook = ::SetWindowsHookEx(WH_CBT, CallCBT, AfxGetInstanceHandle(), 0);
+	//HINSTANCE ht = AfxGetInstanceHandle();
+	//if (hsHinstance.find(ht) == hsHinstance.end())
+	//{
+	//	hCallWndProcHook = ::SetWindowsHookEx(WH_CALLWNDPROC, CallWndProc, AfxGetInstanceHandle(), 0);
+	//	hCallWndProcRetHook = ::SetWindowsHookEx(WH_CALLWNDPROCRET, CallWndProcRet, AfxGetInstanceHandle(), 0);
+	//	hCallCBTHook = ::SetWindowsHookEx(WH_CBT, CallCBT, AfxGetInstanceHandle(), 0);
 
-		hsHinstance.insert(ht);
-	}
+	//	hsHinstance.insert(ht);
+	//}
 	return bRet;
 }
 
@@ -223,54 +224,65 @@ BSTR CSafeTextBoxControlCtrl::GetSafeText()
 	return strResult.AllocSysString();
 }
 
-BOOL bPasteFlag = FALSE;
-CString sEditContext;
 
-//钩子函数
-LRESULT CALLBACK CSafeTextBoxControlCtrl::CallWndProc(int code, WPARAM wParam, LPARAM lParam)
+LRESULT CSafeTextBoxControlCtrl::OnPaste(WPARAM w, LPARAM l)
 {
-	CWnd *topWnd = (CWnd *)::GetTopWindow(NULL);
-	CEdit *wnd = (CEdit *)topWnd->GetFocus();
-	CWPSTRUCT *pMsg = (CWPSTRUCT*)lParam;
-	if (code == HC_ACTION && hsEdit.find(wnd) != hsEdit.end())
-	{
-		switch (pMsg->message)
-		{
-		case WM_PASTE:
-			bPasteFlag = TRUE;
-			sEditContext.Format(L"%s", ((CSafeTextBoxControlCtrl *)wnd)->GetText());
-		}
-	}
-	//让其他全局钩子获得消息
-	return CallNextHookEx(hCallWndProcHook, code, wParam, lParam);
+	return TRUE;
 }
 
-LRESULT CALLBACK CSafeTextBoxControlCtrl::CallWndProcRet(int code, WPARAM wParam, LPARAM lParam)
+LRESULT CSafeTextBoxControlCtrl::OnContextMenu(WPARAM w, LPARAM l)
 {
-	if (bPasteFlag)
-	{
-		CWPRETSTRUCT *pMsg = (CWPRETSTRUCT*)lParam;
-
-		CWnd *topWnd = (CWnd *)::GetTopWindow(NULL);
-		CEdit *wnd = (CEdit *)topWnd->GetFocus();
-		((CSafeTextBoxControlCtrl *)wnd)->SetText(sEditContext.AllocSysString());
-		return true;
-	}
-	return CallNextHookEx(hCallWndProcRetHook, code, wParam, lParam);
+	return TRUE;
 }
-LRESULT CALLBACK CSafeTextBoxControlCtrl::CallCBT(int code, WPARAM wParam, LPARAM lParam)
-{
-	if (bPasteFlag)
-	{
-		bPasteFlag = FALSE;
-		CWPRETSTRUCT *pMsg = (CWPRETSTRUCT*)lParam;
 
-		CWnd *topWnd = (CWnd *)::GetTopWindow(NULL);
-		CEdit *wnd = (CEdit *)topWnd->GetFocus();
-		int start, end;
-		((CSafeTextBoxControlCtrl *)wnd)->SetText(sEditContext.AllocSysString());
-		wnd->SetSel(0, -1);
-		return true;
-	}
-	return CallNextHookEx(hCallCBTHook, code, wParam, lParam);
-}
+//BOOL bPasteFlag = FALSE;
+//CString sEditContext;
+//
+////钩子函数
+//LRESULT CALLBACK CSafeTextBoxControlCtrl::CallWndProc(int code, WPARAM wParam, LPARAM lParam)
+//{
+//	//CWnd *topWnd = (CWnd *)::GetTopWindow(NULL);
+//	//CEdit *wnd = (CEdit *)topWnd->GetFocus();
+//	//CWPSTRUCT *pMsg = (CWPSTRUCT*)lParam;
+//	//if (code == HC_ACTION && hsEdit.find(wnd) != hsEdit.end())
+//	//{
+//	//	switch (pMsg->message)
+//	//	{
+//	//	case WM_PASTE:
+//	//		bPasteFlag = TRUE;
+//	//		sEditContext.Format(L"%s", ((CSafeTextBoxControlCtrl *)wnd)->GetText());
+//	//	}
+//	//}
+//	//让其他全局钩子获得消息
+//	return CallNextHookEx(hCallWndProcHook, code, wParam, lParam);
+//}
+//
+//LRESULT CALLBACK CSafeTextBoxControlCtrl::CallWndProcRet(int code, WPARAM wParam, LPARAM lParam)
+//{
+//	if (bPasteFlag)
+//	{
+//		CWPRETSTRUCT *pMsg = (CWPRETSTRUCT*)lParam;
+//
+//		CWnd *topWnd = (CWnd *)::GetTopWindow(NULL);
+//		CEdit *wnd = (CEdit *)topWnd->GetFocus();
+//		((CSafeTextBoxControlCtrl *)wnd)->SetText(sEditContext.AllocSysString());
+//		return true;
+//	}
+//	return CallNextHookEx(hCallWndProcRetHook, code, wParam, lParam);
+//}
+//LRESULT CALLBACK CSafeTextBoxControlCtrl::CallCBT(int code, WPARAM wParam, LPARAM lParam)
+//{
+//	if (bPasteFlag)
+//	{
+//		bPasteFlag = FALSE;
+//		CWPRETSTRUCT *pMsg = (CWPRETSTRUCT*)lParam;
+//
+//		CWnd *topWnd = (CWnd *)::GetTopWindow(NULL);
+//		CEdit *wnd = (CEdit *)topWnd->GetFocus();
+//		int start, end;
+//		((CSafeTextBoxControlCtrl *)wnd)->SetText(sEditContext.AllocSysString());
+//		wnd->SetSel(0, -1);
+//		return true;
+//	}
+//	return CallNextHookEx(hCallCBTHook, code, wParam, lParam);
+//}
