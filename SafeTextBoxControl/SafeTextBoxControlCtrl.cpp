@@ -215,12 +215,15 @@ BSTR CSafeTextBoxControlCtrl::GetSafeText()
 	strResult.Format(L"%s", this->GetText());
 	char* tmp = _com_util::ConvertBSTRToString(strResult.AllocSysString());
 	char* key =_com_util::ConvertBSTRToString(m_SafeKey.AllocSysString());
+	//strResult.~CStringT();
 	char* encryptStr = HISIGN_Encrypt(key, tmp);
+	delete[] tmp;
 	BSTR encryptResult = CComBSTR(encryptStr);
-
+	delete[] encryptStr;
 	char* encryptStr2 = _com_util::ConvertBSTRToString(encryptResult);
+	SysFreeString(encryptResult);
 	char *decryptStr = HISIGN_Decrypt(key, encryptStr2);
-
+	delete[] encryptStr2;
 	BSTR strResult3 = CComBSTR(decryptStr);
 	return strResult3;
 }
