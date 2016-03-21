@@ -59,6 +59,9 @@
     <ClCompile Include="BASE64.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="参考.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CryptoLibrary.rc">
