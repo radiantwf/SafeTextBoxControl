@@ -16,7 +16,8 @@
 #endif
 
 #pragma comment(lib, "comsupp.lib")
-#pragma comment(lib, "..\\Debug\\CryptoLibrary.lib")
+//#pragma comment(lib, "..\\Debug\\CryptoLibrary.lib")
+#pragma comment(lib, "..\\Release\\CryptoLibrary.lib")
 
 IMPLEMENT_DYNCREATE(CSafeTextBoxControlCtrl, COleControl)
 
@@ -210,7 +211,6 @@ BSTR CSafeTextBoxControlCtrl::GetSafeText()
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
 	CString strResult;
-	m_SafeKey = L"你好么？";
 	// TODO: 在此添加调度处理程序代码
 	strResult.Format(L"%s", this->GetText());
 	char* tmp = _com_util::ConvertBSTRToString(strResult.AllocSysString());

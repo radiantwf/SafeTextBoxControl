@@ -13,11 +13,12 @@
 #define HASH_LEGNTH sizeof(unsigned int) * 8
 
 
-int getAesKey(const char* userKey, char *aesKey)
+int getAesKey(const char* userKey, unsigned char *aesKey)
 {
 
 	unsigned int hash = 0;
 	char* tmpKey = new char[sizeof(unsigned int) * 8];
+	memset(tmpKey, 0x00, sizeof(unsigned int) * 8);
 	if (userKey && *userKey != 0)
 	{
 		hash = APHash((char *)userKey);
@@ -30,7 +31,6 @@ int getAesKey(const char* userKey, char *aesKey)
 	sprintf_s(tmpKey, sizeof(unsigned int) * 8, "%u", hash);
 	memcpy(aesKey, tmpKey + 4, AES_KEY_LEGNTH);
 	delete[] tmpKey;
-
 	return ERROR_SUCCESS;
 }
 
@@ -38,7 +38,7 @@ char * __stdcall HISIGN_Encrypt(char * key, char * str)
 {
 	if (!str && *str == 0)
 		return NULL;
-	char aesKey[AES_KEY_LEGNTH];
+	unsigned char aesKey[AES_KEY_LEGNTH];
 
 	int ret = getAesKey(key, aesKey);
 	if (ret != ERROR_SUCCESS)
@@ -47,7 +47,7 @@ char * __stdcall HISIGN_Encrypt(char * key, char * str)
 	}
 
 	// º”√‹
-	AES aes((unsigned char *)aesKey);
+	AES aes(aesKey);
 
 	int strLength = strlen(str);
 	int tmpStrLength = (strlen(str) + 15) / 16 * 16;
@@ -68,7 +68,7 @@ char * __stdcall HISIGN_Decrypt(char * key, char * str)
 {
 	if (!str && *str == 0)
 		return NULL;
-	char aesKey[AES_KEY_LEGNTH];
+	unsigned char aesKey[AES_KEY_LEGNTH];
 
 	int ret = getAesKey(key, aesKey);
 	if (ret != ERROR_SUCCESS)
@@ -77,7 +77,7 @@ char * __stdcall HISIGN_Decrypt(char * key, char * str)
 	}
 
 	// º”√‹
-	AES aes((unsigned char *)aesKey);
+	AES aes(aesKey);
 
 	int strLength = strlen(str);
 	char *tmpStr = new char[strLength];
