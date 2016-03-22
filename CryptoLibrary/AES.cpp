@@ -126,11 +126,7 @@ void* AES::Cipher(void* input, int length)
 {
 	unsigned char* in = (unsigned char*) input;
 	int i;
-	if(!length)
-	{
-		while(*(in+length++));
-		in = (unsigned char*) input;
-	}
+
 	for(i=0; i<length; i+=16)
 	{
 		Cipher(in+i);

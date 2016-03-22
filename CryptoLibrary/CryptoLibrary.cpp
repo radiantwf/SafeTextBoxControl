@@ -9,16 +9,16 @@
 #include "AES.h"
 #include "BASE64.h"
 
-#define AES_KEY_LEGNTH 8
+#define AES_KEY_LEGNTH 64
 #define HASH_LEGNTH sizeof(unsigned int) * 8
 
 
 int getAesKey(const char* userKey, unsigned char *aesKey)
 {
-
 	unsigned int hash = 0;
 	char* tmpKey = new char[sizeof(unsigned int) * 8];
 	memset(tmpKey, 0x00, sizeof(unsigned int) * 8);
+	memset(aesKey, 0x00, AES_KEY_LEGNTH);
 	if (userKey && *userKey != 0)
 	{
 		hash = APHash((char *)userKey);
@@ -29,7 +29,7 @@ int getAesKey(const char* userKey, unsigned char *aesKey)
 	}
 
 	sprintf_s(tmpKey, sizeof(unsigned int) * 8, "%u", hash);
-	memcpy(aesKey, tmpKey + 4, AES_KEY_LEGNTH);
+	memcpy_s(aesKey, AES_KEY_LEGNTH, tmpKey + 4, sizeof(unsigned int));
 	delete[] tmpKey;
 	return ERROR_SUCCESS;
 }
