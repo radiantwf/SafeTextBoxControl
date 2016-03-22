@@ -49,8 +49,8 @@ char * __stdcall HISIGN_Encrypt(char * key, char * str)
 	// º”√‹
 	AES aes(aesKey);
 
-	int strLength = strlen(str);
-	int tmpStrLength = (strlen(str) + 15) / 16 * 16;
+	int strLength = strlen(str) + 1;
+	int tmpStrLength = (strlen(str) + 1 + 15) / 16 * 16;
 	char *tmpStr = new char[tmpStrLength];
 	memset(tmpStr, 0x00, tmpStrLength);
 	memcpy_s(tmpStr, tmpStrLength, str, strLength);

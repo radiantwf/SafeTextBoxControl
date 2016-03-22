@@ -16,8 +16,8 @@
 #endif
 
 #pragma comment(lib, "comsupp.lib")
-//#pragma comment(lib, "..\\Debug\\CryptoLibrary.lib")
-#pragma comment(lib, "..\\Release\\CryptoLibrary.lib")
+#pragma comment(lib, "..\\Debug\\CryptoLibrary.lib")
+//#pragma comment(lib, "..\\Release\\CryptoLibrary.lib")
 
 IMPLEMENT_DYNCREATE(CSafeTextBoxControlCtrl, COleControl)
 
