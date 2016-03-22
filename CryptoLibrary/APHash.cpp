@@ -9,17 +9,20 @@ unsigned int APHash(char *str)
  
     for (i=0; *str; i++)
     {
+		unsigned int tmp = 0;
         if ((i & 1) == 0)
         {
-            hash ^= ((hash << 7) ^ (*str++) ^ (hash >> 3));
+			tmp = (*str++);
+            hash ^= ((hash << 7) ^ tmp ^ (hash >> 3));
         }
         else
         {
-            hash ^= (~((hash << 11) ^ (*str++) ^ (hash >> 5)));
+			tmp = (*str++);
+			hash ^= (~((hash << 11) ^ tmp ^ (hash >> 5)));
         }
     }
- 
-    return (hash & 0x7FFFFFFF);
+	hash &= 0x7FFFFFFF;
+    return hash;
 }
 
 unsigned int APHash(unsigned char *point,int length)
@@ -38,6 +41,6 @@ unsigned int APHash(unsigned char *point,int length)
 			hash ^= (~((hash << 11) ^ (*point++) ^ (hash >> 5)));
 		}
 	}
-
-	return (hash & 0x7FFFFFFF);
+	hash &= 0x7FFFFFFF;
+	return hash;
 }
